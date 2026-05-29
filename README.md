@@ -3,7 +3,12 @@
 ![Python](https://img.shields.io/badge/python-3.8%2B-blue?logo=python&logoColor=white)
 ![API](https://img.shields.io/badge/API-Genius-yellow)
 
-Search for songs by lyric fragment using the Genius API. Type a piece of a song you remember and get the top 5 matching results instantly — no account needed to run it, just a free API token.
+Search for songs by **title**, **artist name**, or both — powered by the Genius API. Get the top 5 matching results instantly with direct links to the full lyrics on Genius.
+
+> **Why title/artist instead of lyrics?**  
+> The Genius API `/search` endpoint indexes song titles and artist metadata,
+> not the actual lyric text. Searching by lyric fragment returns unreliable
+> results, so this tool embraces what the API actually does well.
 
 ## Requirements
 
@@ -28,7 +33,7 @@ You need a free Genius API token (takes about 2 minutes to set up).
    ```bash
    export GENIUS_ACCESS_TOKEN='your_token_here'
    ```
-   Add that line to `~/.bashrc` or `~/.zshrc` to make it permanent across sessions.
+   Add that line to `~/.bashrc` or `~/.zshrc` to make it permanent.
 
    **Windows — PowerShell:**
    ```powershell
@@ -46,23 +51,36 @@ You need a free Genius API token (takes about 2 minutes to set up).
 python main.py
 ```
 
-An interactive prompt will appear. Type any lyric fragment and press Enter — the script will show up to 5 matching songs with links to the full lyrics on Genius. Type `q` to quit.
+An interactive prompt will appear. You can search by:
+
+| Input style | Example |
+|---|---|
+| Song title only | `Bohemian Rhapsody` |
+| Artist name only | `Queen` |
+| Title + artist | `Queen Bohemian Rhapsody` |
 
 ```
 =======================================================
-  SMART LYRICS — Song lyrics search engine
+  SMART LYRICS — Song search by title or artist
 =======================================================
 
-  Enter a lyric fragment (or 'q' to quit): blinded by the lights
+  Tips:
+    • Search by song title     →  Bohemian Rhapsody
+    • Search by artist name    →  Queen
+    • Combine both             →  Queen Bohemian Rhapsody
 
-  1. Blinded by the Lights — The Streets (May 17, 2004)
-     https://genius.com/The-streets-blinded-by-the-lights-lyrics
+  Search (title / artist / both) — or 'q' to quit: The Weeknd Blinding Lights
 
-  2. Blinded By The Lights — Dan Caplen (November 22, 2016)
-     https://genius.com/Dan-caplen-blinded-by-the-lights-lyrics
+  1. Blinding Lights — The Weeknd (November 29, 2019)
+     https://genius.com/The-weeknd-blinding-lights-lyrics
+
+  2. Blinding Lights (Remix) — The Weeknd (April 24, 2020)
+     https://genius.com/The-weeknd-blinding-lights-remix-lyrics
 
   Press Enter to continue...
 ```
+
+Type `q` to quit.
 
 ## Project Structure
 
@@ -73,7 +91,3 @@ smart-lyrics-en/
 ├── .gitignore         # Files Git should not track
 └── README.md          # You are here
 ```
-
-## License
-
-Distributed under the [MIT License](LICENSE).
