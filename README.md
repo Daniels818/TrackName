@@ -1,7 +1,6 @@
 # Smart Lyrics
 
 ![Python](https://img.shields.io/badge/python-3.8%2B-blue?logo=python&logoColor=white)
-![License](https://img.shields.io/badge/license-MIT-green)
 ![API](https://img.shields.io/badge/API-Genius-yellow)
 
 Search for songs by lyric fragment using the Genius API. Type a piece of a song you remember and get the top 5 matching results instantly — no account needed to run it, just a free API token.
