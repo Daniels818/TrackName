@@ -71,7 +71,6 @@ smart-lyrics-en/
 ├── main.py            # All the logic lives here
 ├── requirements.txt   # Third-party dependencies
 ├── .gitignore         # Files Git should not track
-├── LICENSE            # MIT License
 └── README.md          # You are here
 ```
 
