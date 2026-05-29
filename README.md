@@ -1,4 +1,4 @@
-# Smart Lyrics
+# TrackName
 
 ![Python](https://img.shields.io/badge/python-3.8%2B-blue?logo=python&logoColor=white)
 ![API](https://img.shields.io/badge/API-Genius-yellow)
@@ -61,7 +61,7 @@ An interactive prompt will appear. You can search by:
 
 ```
 =======================================================
-  SMART LYRICS — Song search by title or artist
+  TrackName — Song search by title or artist
 =======================================================
 
   Tips:
@@ -85,7 +85,7 @@ Type `q` to quit.
 ## Project Structure
 
 ```
-smart-lyrics-en/
+trackname/
 ├── main.py            # All the logic lives here
 ├── requirements.txt   # Third-party dependencies
 ├── .gitignore         # Files Git should not track

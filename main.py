@@ -1,5 +1,5 @@
 # =============================================================================
-# SMART LYRICS — Song search engine (by title or artist)
+# TrackName — Song search engine (by title or artist)
 # Phase 4: Switched from lyric-fragment search to title/artist search.
 #
 # Background:
@@ -150,7 +150,7 @@ def main():
     # Banner — printed once before the loop starts
     # -------------------------------------------------------------------------
     print("=" * 55)
-    print("  SMART LYRICS — Song search by title or artist")
+    print("  TrackName — Song search by title or artist")
     print("=" * 55)
     print()
     print("  Tips:")
