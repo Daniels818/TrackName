@@ -3,7 +3,7 @@
 ![Python](https://img.shields.io/badge/python-3.8%2B-blue?logo=python&logoColor=white)
 ![API](https://img.shields.io/badge/API-Genius-yellow)
 
-Search for songs by **title**, **artist name**, or both — powered by the Genius API. Get the top 5 matching results instantly with direct links to the full lyrics on Genius.
+Search for songs by **title**, **artist name**, or both — powered by the Genius API. Get the top 5 matching results instantly with direct links to the matching Genius song pages.
 
 > **Why title/artist instead of lyrics?**  
 > The Genius API `/search` endpoint indexes song titles and artist metadata,
@@ -71,10 +71,10 @@ An interactive prompt will appear. You can search by:
 
   Search (title / artist / both) — or 'q' to quit: The Weeknd Blinding Lights
 
-  1. Blinding Lights — The Weeknd (November 29, 2019)
+  1. Blinding Lights - The Weeknd (November 29, 2019)
      https://genius.com/The-weeknd-blinding-lights-lyrics
 
-  2. Blinding Lights (Remix) — The Weeknd (April 24, 2020)
+  2. Blinding Lights (Remix) - The Weeknd (April 24, 2020)
      https://genius.com/The-weeknd-blinding-lights-remix-lyrics
 
   Press Enter to continue...
@@ -82,12 +82,24 @@ An interactive prompt will appear. You can search by:
 
 Type `q` to quit.
 
+## Testing
+
+```bash
+python -m unittest discover
+```
+
 ## Project Structure
 
 ```
 trackname/
-├── main.py            # All the logic lives here
-├── requirements.txt   # Third-party dependencies
-├── .gitignore         # Files Git should not track
-└── README.md          # You are here
+├── main.py              # Starts the command-line app
+├── trackname/
+│   ├── api.py           # Genius API calls and response validation
+│   ├── cli.py           # Interactive command-line flow
+│   ├── display.py       # Console result formatting
+│   └── text.py          # Query cleanup helpers
+├── tests/               # Unit tests
+├── requirements.txt     # Third-party dependencies
+├── .gitignore           # Files Git should not track
+└── README.md            # You are here
 ```
