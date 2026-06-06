@@ -5,9 +5,9 @@ from datetime import datetime
 import requests
 
 from trackname.api import InvalidAPIResponseError, search_genius
-from trackname.display import display_results
+from trackname.display import display_results, display_song_detail
 from trackname.text import clean_query
-from trackname import storage
+from trackname import details, storage
 
 
 def print_missing_token_help():
@@ -118,20 +118,42 @@ def search_and_display(user_input, query, token):
 
     storage.add_history_entry(user_input, hits)
 
-    fav = input("  \u00bfGuardar alg\u00fan favorito? (n\u00famero o Enter para omitir): ").strip()
-    if fav.isdigit():
-        idx = int(fav) - 1
-        top = hits[:5]
-        if 0 <= idx < len(top):
-            song_data = storage.extract_song_data(top[idx])
-            added = storage.add_favorite_entry(song_data)
-            if added:
-                print("  \u00a1Guardado en favoritos!")
-            else:
-                print("  Ya est\u00e1 en favoritos.")
+    pick = input("  Ver detalle / guardar favorito (n\u00famero) o Enter para omitir: ").strip()
+    if not pick.isdigit():
+        return
+
+    idx = int(pick) - 1
+    top = hits[:5]
+    if idx < 0 or idx >= len(top):
+        print("  Invalid number.")
+        return
+
+    hit = top[idx]
+    song_id = hit.get("result", {}).get("id")
+    song_url = hit.get("result", {}).get("url", "")
+
+    song_details = {}
+    lyrics_preview = ""
+
+    if song_id:
+        try:
+            song_details = details.fetch_song_details(song_id, token)
+        except (requests.exceptions.RequestException, InvalidAPIResponseError):
+            print("  Error al obtener detalles.")
+
+    if song_url:
+        lyrics_preview = details.fetch_lyrics_preview(song_url)
+
+    display_song_detail(hit, song_details, lyrics_preview)
+
+    fav = input("  \u00bfGuardar en favoritos? (s/N): ").strip().lower()
+    if fav == "s":
+        song_data = storage.extract_song_data(hit)
+        added = storage.add_favorite_entry(song_data)
+        if added:
+            print("  \u00a1Guardado en favoritos!")
         else:
-            print("  Invalid number.")
-        print()
+            print("  Ya est\u00e1 en favoritos.")
 
 
 def main():
