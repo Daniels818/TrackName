@@ -3,24 +3,24 @@
 {% block content %}
 <div class="center-container">
     <h1 style="font-size: 3rem; margin-bottom: 0.5rem;">TrackName</h1>
-    <p class="text-muted" style="margin-bottom: 2rem;">Busca canciones por título, artista o letra</p>
+    <p class="text-muted" style="margin-bottom: 2rem;">Search songs by title, artist, or lyrics</p>
     
     <div class="tabs">
-        <div class="tab active" data-target="title">Por título / artista</div>
-        <div class="tab" data-target="lyrics">Por letra</div>
+        <div class="tab active" data-target="title">By Title / Artist</div>
+        <div class="tab" data-target="lyrics">By Lyrics</div>
     </div>
     
     <div id="title" class="tab-content">
         <form action="/search" method="GET" class="search-form">
-            <input type="text" name="q" class="input" placeholder="Ej. Bohemian Rhapsody" required>
-            <button type="submit" class="btn btn-accent">Buscar</button>
+            <input type="text" name="q" class="input" placeholder="e.g., Bohemian Rhapsody" required>
+            <button type="submit" class="btn btn-accent">Search</button>
         </form>
     </div>
     
     <div id="lyrics" class="tab-content" style="display: none;">
         <form action="/lyrics/search" method="GET" class="search-form">
-            <input type="text" name="q" class="input" placeholder="Fragmento de letra..." required>
-            <button type="submit" class="btn btn-accent">Buscar</button>
+            <input type="text" name="q" class="input" placeholder="Lyrics snippet..." required>
+            <button type="submit" class="btn btn-accent">Search</button>
         </form>
     </div>
 </div>

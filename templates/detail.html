@@ -7,32 +7,32 @@
 <div class="detail-layout">
     <div>
         {% set img_url = request.args.get('img') %}
-        <img src="{{ img_url if img_url else 'data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22200%22><rect width=%22200%22 height=%22200%22 fill=%22%23333%22/></svg>' }}" class="detail-img" alt="Portada" onerror="handleDetailImageError(this)">
+        <img src="{{ img_url if img_url else 'data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22200%22><rect width=%22200%22 height=%22200%22 fill=%22%23333%22/></svg>' }}" class="detail-img" alt="Cover" onerror="handleDetailImageError(this)">
     </div>
     <div class="detail-info">
-        <h1 style="margin: 0 0 0.5rem 0; font-size: 2.5rem;">{{ request.args.get('title') if request.args.get('title') else 'Detalle de canción' }}</h1>
+        <h1 style="margin: 0 0 0.5rem 0; font-size: 2.5rem;">{{ request.args.get('title') if request.args.get('title') else 'Song Details' }}</h1>
         <div class="detail-meta">
-            <div><strong>Artista:</strong> {{ request.args.get('artist') if request.args.get('artist') else 'Desconocido' }}</div>
-            <div><strong>Álbum:</strong> {{ details.album_name if details.album_name else 'Desconocido' }} ({{ details.album_year if details.album_year else '?' }})</div>
-            <div><strong>Featurings:</strong> {{ details.featured | join(', ') if details.featured else 'ninguno' }}</div>
-            <div><strong>Anotaciones:</strong> {{ details.annotations }}</div>
-            <div><strong>Vistas:</strong> {{ details.pageviews if details.pageviews else '0' }}</div>
+            <div><strong>Artist:</strong> {{ request.args.get('artist') if request.args.get('artist') else 'Unknown' }}</div>
+            <div><strong>Album:</strong> {{ details.album_name if details.album_name else 'Unknown' }} ({{ details.album_year if details.album_year else '?' }})</div>
+            <div><strong>Featured:</strong> {{ details.featured | join(', ') if details.featured else 'none' }}</div>
+            <div><strong>Annotations:</strong> {{ details.annotations }}</div>
+            <div><strong>Pageviews:</strong> {{ details.pageviews if details.pageviews else '0' }}</div>
         </div>
         
-        <button class="btn btn-ghost mb-4" onclick='toggleFavorite({
-            "title": {{ (request.args.get("title") or "") | tojson }},
-            "artist": {{ (request.args.get("artist") or "") | tojson }},
-            "year": {{ (details.album_year | string if details.album_year else "") | tojson }},
-            "url": {{ (request.args.get("url") or "") | tojson }}
-        }, this)'>♥ Guardar en favoritos</button>
+        <button class="btn btn-ghost mb-4"
+                data-title="{{ request.args.get('title', '') }}"
+                data-artist="{{ request.args.get('artist', '') }}"
+                data-year="{{ details.album_year or '' }}"
+                data-url="{{ request.args.get('url', '') }}"
+                onclick="toggleFavorite(this.dataset, this)">♥ Save to Favorites</button>
 
         {% if details.description %}
-        <h3 class="mt-4 mb-4">Descripción</h3>
+        <h3 class="mt-4 mb-4">Description</h3>
         <p class="text-muted">{{ details.description }}</p>
         {% endif %}
         
-        <h3 class="mt-4 mb-4">Extracto de letra</h3>
-        <div class="detail-lyrics">{{ lyrics_preview if lyrics_preview else '(letra no disponible)' }}</div>
+        <h3 class="mt-4 mb-4">Lyrics Preview</h3>
+        <div class="detail-lyrics">{{ lyrics_preview if lyrics_preview else '(lyrics not available)' }}</div>
     </div>
 </div>
 {% endif %}

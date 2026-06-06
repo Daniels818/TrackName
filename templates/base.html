@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,10 +14,10 @@
     <nav>
         <a href="/" class="nav-brand">TrackName</a>
         <div class="nav-links">
-            <a href="/" class="{% if request.path == '/' or request.path == '/search' %}active{% endif %}">Buscar</a>
-            <a href="/lyrics" class="{% if request.path.startswith('/lyrics') %}active{% endif %}">Por letra</a>
-            <a href="/history" class="{% if request.path == '/history' %}active{% endif %}">Historial</a>
-            <a href="/favorites" class="{% if request.path == '/favorites' %}active{% endif %}">Favoritos</a>
+            <a href="/" class="{% if request.path == '/' or request.path == '/search' %}active{% endif %}">Search</a>
+            <a href="/lyrics" class="{% if request.path.startswith('/lyrics') %}active{% endif %}">By Lyrics</a>
+            <a href="/history" class="{% if request.path == '/history' %}active{% endif %}">History</a>
+            <a href="/favorites" class="{% if request.path == '/favorites' %}active{% endif %}">Favorites</a>
         </div>
     </nav>
     <main>

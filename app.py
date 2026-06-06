@@ -6,7 +6,7 @@ from flask import Flask
 def datetimeformat(value):
     try:
         dt = datetime.fromisoformat(value)
-        months = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"]
+        months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
         return f"{dt.day} {months[dt.month - 1]} {dt.year} · {dt.strftime('%H:%M')}"
     except (ValueError, TypeError):
         return value

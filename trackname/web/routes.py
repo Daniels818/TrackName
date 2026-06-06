@@ -87,12 +87,12 @@ def lyrics():
 def search_lyrics():
     fragment = request.args.get('q', '').strip()
     if not fragment:
-        return render_template('lyrics.html', error="No se encontraron canciones")
+        return render_template('lyrics.html', error="No songs found")
         
     try:
         candidates = lyrics_search.search_by_lyrics(fragment)
         if not candidates:
-            return render_template('lyrics.html', error="No se encontraron canciones")
+            return render_template('lyrics.html', error="No songs found")
         if len(candidates) == 1:
             chosen = candidates[0]
             q = f"{chosen['artist']} {chosen['title']}"

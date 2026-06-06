@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const historyForm = document.getElementById('history-clear-form');
     if (historyForm) {
         historyForm.addEventListener('submit', (e) => {
-            if (!confirm("¿Borrar todo el historial?")) {
+            if (!confirm("Clear all search history?")) {
                 e.preventDefault();
             }
         });
@@ -68,7 +68,7 @@ async function toggleFavorite(songData, btn) {
             }
         }
     } catch (e) {
-        alert('Hubo un error de red.');
+        alert('There was a network error.');
     } finally {
         btn.disabled = false;
         btn.innerHTML = originalText;
@@ -76,7 +76,7 @@ async function toggleFavorite(songData, btn) {
 }
 
 async function removeFavorite(url, btn) {
-    if (!confirm("¿Seguro que deseas eliminar este favorito?")) return;
+    if (!confirm("Are you sure you want to remove this favorite?")) return;
     
     const card = btn.closest('.card');
     const originalText = btn.innerHTML;
@@ -103,7 +103,7 @@ async function removeFavorite(url, btn) {
             }, 300);
         }
     } catch (e) {
-        alert('Hubo un error de red.');
+        alert('There was a network error.');
         btn.disabled = false;
         btn.innerHTML = originalText;
     }

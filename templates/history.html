@@ -2,24 +2,24 @@
 
 {% block content %}
 <div class="flex-between">
-    <h2 style="margin: 0;">Historial</h2>
+    <h2 style="margin: 0;">History</h2>
     {% if entries %}
     <form id="history-clear-form" action="/history/clear" method="POST" style="margin: 0;">
-        <button type="submit" class="btn btn-danger">Borrar historial</button>
+        <button type="submit" class="btn btn-danger">Clear History</button>
     </form>
     {% endif %}
 </div>
 
 {% if not entries %}
-<p class="text-muted">Tu historial está vacío</p>
+<p class="text-muted">Your history is empty</p>
 {% else %}
 <div class="card" style="padding: 0; overflow-x: auto;">
     <table class="table">
         <thead>
             <tr>
-                <th>Fecha</th>
+                <th>Date</th>
                 <th>Query</th>
-                <th>Nº resultados</th>
+                <th>No. of Results</th>
             </tr>
         </thead>
         <tbody>

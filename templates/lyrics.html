@@ -2,10 +2,10 @@
 
 {% block content %}
 <div class="center-container" style="min-height: auto; margin-bottom: 2rem; align-items: flex-start; text-align: left;">
-    <h2 class="mb-4">Buscar por letra</h2>
+    <h2 class="mb-4">Search by Lyrics</h2>
     <form action="/lyrics/search" method="GET" class="search-form" style="max-width: none;">
-        <input type="text" name="q" class="input" placeholder="Fragmento de letra..." required value="{{ request.args.get('q', '') }}">
-        <button type="submit" class="btn btn-accent">Buscar</button>
+        <input type="text" name="q" class="input" placeholder="Lyrics snippet..." required value="{{ request.args.get('q', '') }}">
+        <button type="submit" class="btn btn-accent">Search</button>
     </form>
 </div>
 
@@ -15,7 +15,7 @@
 
 {% if candidates %}
 <div class="card">
-    <h3 class="mb-4" style="margin-top: 0;">Se encontraron estas canciones:</h3>
+    <h3 class="mb-4" style="margin-top: 0;">Found these songs:</h3>
     <ol style="margin: 0; padding-left: 1.5rem; line-height: 1.8;">
         {% for c in candidates %}
         <li>
