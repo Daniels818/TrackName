@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="flex-between">
+    <h2 style="margin: 0;">Historial</h2>
+    {% if entries %}
+    <form id="history-clear-form" action="/history/clear" method="POST" style="margin: 0;">
+        <button type="submit" class="btn btn-danger">Borrar historial</button>
+    </form>
+    {% endif %}
+</div>
+
+{% if not entries %}
+<p class="text-muted">Tu historial está vacío</p>
+{% else %}
+<div class="card" style="padding: 0; overflow-x: auto;">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Fecha</th>
+                <th>Query</th>
+                <th>Nº resultados</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for entry in entries | reverse %}
+            <tr>
+                <td class="text-muted">{{ entry.timestamp | datetimeformat }}</td>
+                <td><a href="/search?q={{ entry.query | urlencode }}">{{ entry.query }}</a></td>
+                <td>{{ entry.results | length }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endif %}
+{% endblock %}

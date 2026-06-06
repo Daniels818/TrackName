@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="center-container" style="min-height: auto; margin-bottom: 2rem; align-items: flex-start; text-align: left;">
+    <h2 class="mb-4">Buscar por letra</h2>
+    <form action="/lyrics/search" method="GET" class="search-form" style="max-width: none;">
+        <input type="text" name="q" class="input" placeholder="Fragmento de letra..." required value="{{ request.args.get('q', '') }}">
+        <button type="submit" class="btn btn-accent">Buscar</button>
+    </form>
+</div>
+
+{% if error %}
+<div class="error-msg">{{ error }}</div>
+{% endif %}
+
+{% if candidates %}
+<div class="card">
+    <h3 class="mb-4" style="margin-top: 0;">Se encontraron estas canciones:</h3>
+    <ol style="margin: 0; padding-left: 1.5rem; line-height: 1.8;">
+        {% for c in candidates %}
+        <li>
+            <a href="/search?q={{ c.artist | urlencode }}+{{ c.title | urlencode }}">{{ c.title }} — {{ c.artist }}</a>
+        </li>
+        {% endfor %}
+    </ol>
+</div>
+{% endif %}
+{% endblock %}
