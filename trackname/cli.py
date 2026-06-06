@@ -8,6 +8,7 @@ from trackname.api import InvalidAPIResponseError, search_genius
 from trackname.display import display_results, display_song_detail
 from trackname.text import clean_query
 from trackname import details, storage
+from trackname.lyrics_search import search_by_lyrics, LyricsSearchError
 
 
 def print_missing_token_help():
@@ -34,6 +35,7 @@ def print_banner():
     print("      :history      Show last 10 searches")
     print("      :favorites    List all saved favorites")
     print("      :clear        Clear search history")
+    print("      :lyrics       Buscar canción por fragmento de letra")
     print()
 
 
@@ -90,6 +92,47 @@ def handle_clear():
     else:
         print("  Canceled.")
     print()
+
+
+def handle_lyrics_search(token):
+    fragment = input("  Fragmento de letra: ").strip()
+    if not fragment:
+        return
+
+    try:
+        candidates = search_by_lyrics(fragment)
+    except LyricsSearchError as e:
+        print(f"  Error searching by lyrics: {e}")
+        return
+
+    if not candidates:
+        print("  No songs found matching that lyrics fragment.")
+        return
+
+    if len(candidates) == 1:
+        chosen = candidates[0]
+    else:
+        print("  Encontré estas canciones:")
+        for i, c in enumerate(candidates, 1):
+            print(f"  {i}. {c['title']} — {c['artist']}")
+        pick = input("  ¿Cuál buscar? (número, Enter = primera): ").strip()
+        if not pick:
+            chosen = candidates[0]
+        elif pick.isdigit():
+            idx = int(pick) - 1
+            if 0 <= idx < len(candidates):
+                chosen = candidates[idx]
+            else:
+                print("  Invalid number.")
+                return
+        else:
+            print("  Invalid input.")
+            return
+
+    query = f"{chosen['title']} {chosen['artist']}"
+    print(f"  Buscando en Genius: {query}")
+    query_clean = clean_query(query)
+    search_and_display(query, query_clean, token)
 
 
 def search_and_display(user_input, query, token):
@@ -184,6 +227,10 @@ def main():
 
         if user_input == ":clear":
             handle_clear()
+            continue
+
+        if user_input == ":lyrics":
+            handle_lyrics_search(token)
             continue
 
         if user_input.lower() in ("q", "quit", "exit"):
