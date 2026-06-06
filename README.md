@@ -1,32 +1,55 @@
 # TrackName
 
 ![Python](https://img.shields.io/badge/python-3.8%2B-blue?logo=python&logoColor=white)
+![Flask](https://img.shields.io/badge/flask-3.0%2B-lightgrey?logo=flask&logoColor=white)
 ![API](https://img.shields.io/badge/API-Genius%20%7C%20lyrics.ovh-yellow)
 
-TrackName is a powerful command-line tool to discover and manage songs. Search for songs by **title**, **artist name**, or even **a fragment of the lyrics**. View rich song details, read lyrics previews, and manage your search history and favorite tracks locally.
+TrackName is a powerful, dual-interface music discovery and management tool. Search for songs by **title**, **artist name**, or even **a fragment of the lyrics**. View rich song details, read lyrics previews, and manage your search history and favorite tracks locally. 
+
+You can run TrackName as a **Command-Line Interface (CLI)** or launch the modern, dark-themed **Web Application (GUI)**.
+
+---
 
 ## Features
 
+### 🔍 Search & Discovery
 - **Search by Title & Artist:** Fast search powered by the Genius API.
-- **Search by Lyrics (`:lyrics`):** Can't remember the name of a song? Type a snippet of the lyrics to find it, powered by the lyrics.ovh API.
-- **Rich Song Details:** View the album, release year, view count, annotations, featured artists, song description, and a preview of the lyrics right in your terminal.
-- **Favorites (`:favorites`):** Save your favorite songs locally to keep track of your top discoveries.
-- **Search History (`:history`):** TrackName automatically saves your search history so you can easily review your recent queries. You can also clear it anytime with `:clear`.
-- **Robust Error Handling:** Safely handles network timeouts, missing fields, and API rate limits.
+- **Search by Lyrics:** Can't remember the name of a song? Type a snippet of the lyrics to find it, powered by the lyrics.ovh API.
+- **Rich Song Details:** Fetch release year, view count, annotations, featured artists, song description, and a preview of the lyrics.
+
+### 💾 Local Management & Personalization
+- **Favorites:** Save your favorite songs locally to keep track of your top discoveries.
+- **Search History:** Automatically track your search history so you can review recent queries or clear them at any time.
+
+### 🌐 Dual Interface Support
+- **Interactive CLI:** A terminal interface featuring clean console layouts, quick shortcuts, and robust text-based menus.
+- **Modern Web GUI:** A beautiful, responsive dark-mode web dashboard built with vanilla CSS glassmorphism, smooth animations, and clean navigation.
+
+---
 
 ## Requirements
 
 - Python 3.8 or higher
-- `requests`
-- `beautifulsoup4`
+- Flask 3.0+
+- Beautiful Soup 4
+- Requests
+
+---
 
 ## Installation
 
-```bash
-git clone https://github.com/Daniels818/TrackName.git
-cd TrackName
-pip install -r requirements.txt
-```
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/Daniels818/TrackName.git
+   cd TrackName
+   ```
+
+2. Install the required dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+---
 
 ## Configuration
 
@@ -46,55 +69,82 @@ You need a free Genius API token (takes about 2 minutes to set up).
    ```powershell
    $env:GENIUS_ACCESS_TOKEN = "your_token_here"
    ```
-   To make it permanent, use `setx` in CMD:
+
+   **Windows — CMD:**
    ```cmd
    setx GENIUS_ACCESS_TOKEN "your_token_here"
    ```
-   Then open a new terminal window for the change to take effect.
+   *Note: Open a new terminal window after setting environment variables with `setx` for changes to take effect.*
+
+---
 
 ## Usage
 
-Start the interactive CLI by running:
+### 🖥️ Web UI (Flask Web Application)
+Launch the web interface locally by running:
+```bash
+python app.py
+```
+Open your browser and navigate to: **`http://127.0.0.1:5000`**
 
+#### Web Features:
+- Glassmorphic, modern dark-themed user interface.
+- Complete search by text or lyrics.
+- Smooth transitions and interactive cards.
+- Favorites management dashboard.
+- Live search history view with one-click cleanup.
+
+### 📟 CLI (Command-Line Interface)
+Start the interactive command-line app by running:
 ```bash
 python main.py
 ```
 
-### Standard Search
-Simply type a song name, an artist, or both.
-```
-  Search - or type :history, :favorites, :clear, or 'q' to quit: Queen Bohemian Rhapsody
-```
-
-### Special Commands
+#### CLI Special Commands:
 - `:lyrics` — Search for a song using a snippet of its lyrics.
 - `:history` — Show your last 10 searches.
 - `:favorites` — List all your saved favorite songs.
 - `:clear` — Clear your search history.
 - `q`, `quit`, `exit` — Exit the application.
 
+---
+
 ## Testing
 
-To run the automated test suite (30+ robust unit tests):
-
+To run the automated test suite:
 ```bash
 python -m unittest discover
 ```
 
+---
+
 ## Project Structure
 
 ```text
-trackname/
-├── main.py              # Starts the command-line app
-├── trackname/
-│   ├── api.py           # Genius API calls and response validation
-│   ├── cli.py           # Interactive command-line flow
-│   ├── details.py       # Fetching detailed song data & lyrics previews
-│   ├── display.py       # Console result formatting
-│   ├── lyrics_search.py # Lyrics fragment search via lyrics.ovh
-│   ├── storage.py       # Local persistence for history and favorites
-│   └── text.py          # Query cleanup helpers
-├── tests/               # Unit tests 
-├── requirements.txt     # Third-party dependencies
-└── README.md            # You are here
+TrackName/
+├── app.py                  # Entrypoint for the web application
+├── main.py                 # Entrypoint for the CLI application
+├── requirements.txt        # Third-party dependencies
+├── README.md               # Documentation
+├── static/                 # Static assets for the web UI
+│   ├── style.css           # Premium dark-theme CSS stylesheet
+│   └── main.js             # Client-side interactions
+├── templates/              # Jinja2 HTML templates for the web UI
+│   ├── base.html           # Main base layout
+│   ├── index.html          # Homepage / Search selection
+│   ├── results.html        # Track / artist search results page
+│   ├── lyrics.html         # Lyrics fragment search results page
+│   ├── detail.html         # Detailed song info & lyrics preview page
+│   ├── favorites.html      # Saved favorite songs management page
+│   └── history.html        # Search history page
+├── tests/                  # Unit tests for CLI/API modules
+└── trackname/              # Core application package
+    ├── __init__.py
+    ├── api.py              # Genius API integration & response parser
+    ├── cli.py              # CLI interactive flow logic
+    ├── details.py          # Web scraping for lyrics previews & details
+    ├── display.py          # CLI text formatting & colorization
+    ├── lyrics_search.py    # lyrics.ovh API integration for lyrics search
+    ├── storage.py          # Local JSON storage for history & favorites
+    └── text.py             # Query cleanup helpers
 ```
