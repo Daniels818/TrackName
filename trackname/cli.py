@@ -45,6 +45,8 @@ def show_history():
     print(f"  History ({len(entries)} total):")
     print()
     for entry in entries[-10:]:
+        if not isinstance(entry, dict):
+            continue
         ts = entry.get("timestamp", "")
         try:
             dt = datetime.fromisoformat(ts)
@@ -64,6 +66,8 @@ def show_favorites():
     print(f"  Favorites ({len(entries)}):")
     print()
     for i, entry in enumerate(entries, 1):
+        if not isinstance(entry, dict):
+            continue
         title = entry.get("title", "Unknown title")
         artist = entry.get("artist", "Unknown artist")
         year = entry.get("year", "")
@@ -128,9 +132,9 @@ def search_and_display(user_input, query, token):
         print("  Invalid number.")
         return
 
-    hit = top[idx]
-    song_id = hit.get("result", {}).get("id")
-    song_url = hit.get("result", {}).get("url", "")
+    hit = top[idx] or {}
+    song_id = (hit.get("result") or {}).get("id")
+    song_url = (hit.get("result") or {}).get("url", "")
 
     song_details = {}
     lyrics_preview = ""

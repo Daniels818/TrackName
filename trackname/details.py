@@ -18,7 +18,7 @@ def fetch_song_details(song_id, token):
             "Genius returned a response that was not valid JSON."
         ) from exc
 
-    song = data.get("response", {}).get("song", {})
+    song = (data.get("response") or {}).get("song") or {}
     album = song.get("album") or {}
     release = song.get("release_date_components") or {}
 
@@ -27,7 +27,7 @@ def fetch_song_details(song_id, token):
         "album_year": release.get("year"),
         "annotations": song.get("annotation_count", 0),
         "pageviews": (song.get("stats") or {}).get("pageviews"),
-        "featured": [a["name"] for a in (song.get("featured_artists") or [])],
+        "featured": [a.get("name") for a in (song.get("featured_artists") or []) if a.get("name")],
         "description": (song.get("description") or {}).get("plain", ""),
     }
 

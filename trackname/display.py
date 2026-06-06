@@ -5,12 +5,12 @@ def display_results(hits):
         return
 
     for i, hit in enumerate(hits[:5], 1):
-        result = hit.get("result")
+        result = (hit or {}).get("result")
         if not result:
             continue
 
         title = result.get("title", "Unknown title")
-        artist = result.get("primary_artist", {}).get("name", "Unknown artist")
+        artist = (result.get("primary_artist") or {}).get("name", "Unknown artist")
         date = result.get("release_date_for_display", "Unknown date")
         url = result.get("url", "")
 
@@ -22,9 +22,9 @@ def display_results(hits):
 
 def display_song_detail(hit, details, lyrics_preview):
     """Print detailed song info to the console."""
-    result = hit.get("result", {})
+    result = (hit or {}).get("result") or {}
     title = result.get("title", "Unknown title")
-    artist = result.get("primary_artist", {}).get("name", "Unknown artist")
+    artist = (result.get("primary_artist") or {}).get("name", "Unknown artist")
 
     print("\u2550" * 46)
     print(f"  {title} \u2014 {artist}")

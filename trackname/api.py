@@ -21,8 +21,9 @@ def search_genius(query, token):
             "Genius returned a response that was not valid JSON."
         ) from exc
 
-    if "response" not in data or "hits" not in data.get("response", {}):
-        detail = data.get("meta", {}).get("message", "missing response.hits")
+    response_data = data.get("response")
+    if not isinstance(response_data, dict) or "hits" not in response_data:
+        detail = (data.get("meta") or {}).get("message", "missing response.hits")
         raise InvalidAPIResponseError(f"Unexpected Genius API response: {detail}")
 
-    return data["response"]["hits"]
+    return response_data["hits"]

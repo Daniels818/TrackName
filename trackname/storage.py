@@ -47,10 +47,10 @@ def save_favorites(entries):
 
 def extract_song_data(hit):
     """Extract title, artist, year and url from a Genius API hit."""
-    result = hit.get("result", {})
+    result = (hit or {}).get("result") or {}
     return {
         "title": result.get("title", "Unknown title"),
-        "artist": result.get("primary_artist", {}).get("name", "Unknown artist"),
+        "artist": (result.get("primary_artist") or {}).get("name", "Unknown artist"),
         "year": result.get("release_date_for_display", "Unknown year"),
         "url": result.get("url", ""),
     }
@@ -72,6 +72,8 @@ def add_history_entry(query, hits, max_entries=200):
 def add_favorite_entry(song_data):
     entries = load_favorites()
     for existing in entries:
+        if not isinstance(existing, dict):
+            continue
         if song_data.get("url") and existing.get("url") == song_data["url"]:
             return False
         if (existing.get("title") == song_data.get("title")
