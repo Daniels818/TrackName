@@ -35,7 +35,7 @@ def print_banner():
     print("      :history      Show last 10 searches")
     print("      :favorites    List all saved favorites")
     print("      :clear        Clear search history")
-    print("      :lyrics       Buscar canción por fragmento de letra")
+    print("      :lyrics       Search for a song by a lyrics fragment")
     print()
 
 
@@ -95,7 +95,7 @@ def handle_clear():
 
 
 def handle_lyrics_search(token):
-    fragment = input("  Fragmento de letra: ").strip()
+    fragment = input("  Lyrics fragment: ").strip()
     if not fragment:
         return
 
@@ -112,10 +112,10 @@ def handle_lyrics_search(token):
     if len(candidates) == 1:
         chosen = candidates[0]
     else:
-        print("  Encontré estas canciones:")
+        print("  Found these songs:")
         for i, c in enumerate(candidates, 1):
             print(f"  {i}. {c['title']} — {c['artist']}")
-        pick = input("  ¿Cuál buscar? (número, Enter = primera): ").strip()
+        pick = input("  Which one to search? (number, Enter = first): ").strip()
         if not pick:
             chosen = candidates[0]
         elif pick.isdigit():
@@ -130,7 +130,7 @@ def handle_lyrics_search(token):
             return
 
     query = f"{chosen['title']} {chosen['artist']}"
-    print(f"  Buscando en Genius: {query}")
+    print(f"  Searching on Genius: {query}")
     query_clean = clean_query(query)
     search_and_display(query, query_clean, token)
 
@@ -165,7 +165,7 @@ def search_and_display(user_input, query, token):
 
     storage.add_history_entry(user_input, hits)
 
-    pick = input("  Ver detalle / guardar favorito (n\u00famero) o Enter para omitir: ").strip()
+    pick = input("  View details / save favorite (number) or Enter to skip: ").strip()
     if not pick.isdigit():
         return
 
@@ -186,21 +186,21 @@ def search_and_display(user_input, query, token):
         try:
             song_details = details.fetch_song_details(song_id, token)
         except (requests.exceptions.RequestException, InvalidAPIResponseError):
-            print("  Error al obtener detalles.")
+            print("  Error fetching details.")
 
     if song_url:
         lyrics_preview = details.fetch_lyrics_preview(song_url)
 
     display_song_detail(hit, song_details, lyrics_preview)
 
-    fav = input("  \u00bfGuardar en favoritos? (s/N): ").strip().lower()
-    if fav == "s":
+    fav = input("  Save to favorites? (y/N): ").strip().lower()
+    if fav == "y":
         song_data = storage.extract_song_data(hit)
         added = storage.add_favorite_entry(song_data)
         if added:
-            print("  \u00a1Guardado en favoritos!")
+            print("  Saved to favorites!")
         else:
-            print("  Ya est\u00e1 en favoritos.")
+            print("  Already in favorites.")
 
 
 def main():

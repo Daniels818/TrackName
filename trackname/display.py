@@ -33,36 +33,36 @@ def display_song_detail(hit, details, lyrics_preview):
     album = details.get("album_name")
     year = details.get("album_year")
     if album and year:
-        print(f"  \u00c1lbum      : {album} ({year})")
+        print(f"  Album      : {album} ({year})")
     elif album:
-        print(f"  \u00c1lbum      : {album}")
+        print(f"  Album      : {album}")
     elif year:
-        print(f"  \u00c1lbum      : {year}")
+        print(f"  Album      : {year}")
 
     featured = details.get("featured", [])
     if featured:
         print(f"  Featured   : {', '.join(featured)}")
     else:
-        print("  Featured   : (ninguno)")
+        print("  Featured   : (none)")
 
     annotations = details.get("annotations", 0)
     pageviews = details.get("pageviews")
     views_str = f"{pageviews:,}" if pageviews is not None else "N/A"
-    print(f"  Anotaciones: {annotations}  |  Vistas: {views_str}")
+    print(f"  Annotations: {annotations}  |  Views: {views_str}")
 
     description = details.get("description", "")
     if description:
         print()
-        print("  Descripci\u00f3n:")
+        print("  Description:")
         print(f'  "{description}"')
 
     if lyrics_preview:
         print()
-        print("  Extracto de letra:")
+        print("  Lyrics preview:")
         for line in lyrics_preview.split("\n"):
             print(f"  {line}")
     else:
         print()
-        print("  (letra no disponible)")
+        print("  (lyrics not available)")
 
     print("\u2550" * 46)
