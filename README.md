@@ -1,23 +1,30 @@
 # TrackName
 
 ![Python](https://img.shields.io/badge/python-3.8%2B-blue?logo=python&logoColor=white)
-![API](https://img.shields.io/badge/API-Genius-yellow)
+![API](https://img.shields.io/badge/API-Genius%20%7C%20lyrics.ovh-yellow)
 
-Search for songs by **title**, **artist name**, or both — powered by the Genius API. Get the top 5 matching results instantly with direct links to the matching Genius song pages.
+TrackName is a powerful command-line tool to discover and manage songs. Search for songs by **title**, **artist name**, or even **a fragment of the lyrics**. View rich song details, read lyrics previews, and manage your search history and favorite tracks locally.
 
-> **Why title/artist instead of lyrics?**  
-> The Genius API `/search` endpoint indexes song titles and artist metadata,
-> not the actual lyric text. Searching by lyric fragment returns unreliable
-> results, so this tool embraces what the API actually does well.
+## Features
+
+- **Search by Title & Artist:** Fast search powered by the Genius API.
+- **Search by Lyrics (`:lyrics`):** Can't remember the name of a song? Type a snippet of the lyrics to find it, powered by the lyrics.ovh API.
+- **Rich Song Details:** View the album, release year, view count, annotations, featured artists, song description, and a preview of the lyrics right in your terminal.
+- **Favorites (`:favorites`):** Save your favorite songs locally to keep track of your top discoveries.
+- **Search History (`:history`):** TrackName automatically saves your search history so you can easily review your recent queries. You can also clear it anytime with `:clear`.
+- **Robust Error Handling:** Safely handles network timeouts, missing fields, and API rate limits.
 
 ## Requirements
 
 - Python 3.8 or higher
-- pip
+- `requests`
+- `beautifulsoup4`
 
 ## Installation
 
 ```bash
+git clone https://github.com/Daniels818/TrackName.git
+cd TrackName
 pip install -r requirements.txt
 ```
 
@@ -47,42 +54,28 @@ You need a free Genius API token (takes about 2 minutes to set up).
 
 ## Usage
 
+Start the interactive CLI by running:
+
 ```bash
 python main.py
 ```
 
-An interactive prompt will appear. You can search by:
-
-| Input style | Example |
-|---|---|
-| Song title only | `Bohemian Rhapsody` |
-| Artist name only | `Queen` |
-| Title + artist | `Queen Bohemian Rhapsody` |
-
+### Standard Search
+Simply type a song name, an artist, or both.
 ```
-=======================================================
-  TrackName — Song search by title or artist
-=======================================================
-
-  Tips:
-    • Search by song title     →  Bohemian Rhapsody
-    • Search by artist name    →  Queen
-    • Combine both             →  Queen Bohemian Rhapsody
-
-  Search (title / artist / both) — or 'q' to quit: The Weeknd Blinding Lights
-
-  1. Blinding Lights - The Weeknd (November 29, 2019)
-     https://genius.com/The-weeknd-blinding-lights-lyrics
-
-  2. Blinding Lights (Remix) - The Weeknd (April 24, 2020)
-     https://genius.com/The-weeknd-blinding-lights-remix-lyrics
-
-  Press Enter to continue...
+  Search - or type :history, :favorites, :clear, or 'q' to quit: Queen Bohemian Rhapsody
 ```
 
-Type `q` to quit.
+### Special Commands
+- `:lyrics` — Search for a song using a snippet of its lyrics.
+- `:history` — Show your last 10 searches.
+- `:favorites` — List all your saved favorite songs.
+- `:clear` — Clear your search history.
+- `q`, `quit`, `exit` — Exit the application.
 
 ## Testing
+
+To run the automated test suite (30+ robust unit tests):
 
 ```bash
 python -m unittest discover
@@ -90,16 +83,18 @@ python -m unittest discover
 
 ## Project Structure
 
-```
+```text
 trackname/
 ├── main.py              # Starts the command-line app
 ├── trackname/
 │   ├── api.py           # Genius API calls and response validation
 │   ├── cli.py           # Interactive command-line flow
+│   ├── details.py       # Fetching detailed song data & lyrics previews
 │   ├── display.py       # Console result formatting
+│   ├── lyrics_search.py # Lyrics fragment search via lyrics.ovh
+│   ├── storage.py       # Local persistence for history and favorites
 │   └── text.py          # Query cleanup helpers
-├── tests/               # Unit tests
+├── tests/               # Unit tests 
 ├── requirements.txt     # Third-party dependencies
-├── .gitignore           # Files Git should not track
 └── README.md            # You are here
 ```
