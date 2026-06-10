@@ -9,8 +9,7 @@ TrackName is a powerful, dual-interface music discovery and management tool. Sea
 
 ## 🚀 Live Demo
 You can try the web version of TrackName immediately:
-👉 **[View Live Demo on Render](https://trackname.onrender.com)** *(Replace with your actual Render URL)*
-
+👉 **[View Live Demo on Render](https://trackname.onrender.com)** *
 ---
 
 ## ✨ Features
