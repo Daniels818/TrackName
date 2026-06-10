@@ -33,18 +33,39 @@ def fetch_song_details(song_id, token):
 
 
 def fetch_lyrics(artist, title):
-    """Fetch lyrics from lyrics.ovh API using artist and title."""
+    """Fetch lyrics from lyrics.ovh API using artist and title.
+    Tries the exact match first, then attempts cleaned versions of the query.
+    """
     import urllib.parse
-    artist_enc = urllib.parse.quote(artist)
-    title_enc = urllib.parse.quote(title)
-    url = f"https://api.lyrics.ovh/v1/{artist_enc}/{title_enc}"
+    import re
+
+    def _request(a, t):
+        a_enc = urllib.parse.quote(a)
+        t_enc = urllib.parse.quote(t)
+        url = f"https://api.lyrics.ovh/v1/{a_enc}/{t_enc}"
+        res = requests.get(url, timeout=10)
+        res.raise_for_status()
+        return res.json().get("lyrics", "")
+
+    # 1. Try exact match
     try:
-        response = requests.get(url, timeout=10)
-        response.raise_for_status()
-        data = response.json()
-        return data.get("lyrics", "")
+        return _request(artist, title)
     except Exception:
-        return ""
+        pass
+
+    # 2. Try cleaned versions
+    # Clean title: remove parentheses/brackets
+    clean_title = re.sub(r'\(.*?\)|\[.*?\]', '', title).strip()
+    # Clean artist: remove "feat.", "ft.", etc.
+    clean_artist = re.split(r'\s*(?:feat\.?|ft\.?|featuring|&|/|,|;)\s*', artist, flags=re.IGNORECASE)[0].strip()
+
+    if clean_title != title or clean_artist != artist:
+        try:
+            return _request(clean_artist, clean_title)
+        except Exception:
+            pass
+
+    return ""
 
 
 def fetch_lyrics_preview(artist, title):
