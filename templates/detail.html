@@ -24,6 +24,8 @@
                 data-artist="{{ request.args.get('artist', '') }}"
                 data-year="{{ details.album_year or '' }}"
                 data-url="{{ request.args.get('url', '') }}"
+                data-id="{{ song_id }}"
+                data-img="{{ request.args.get('img', '') }}"
                 onclick="toggleFavorite(this.dataset, this)">♥ Save to Favorites</button>
 
         {% if details.description %}

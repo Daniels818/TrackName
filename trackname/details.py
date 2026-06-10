@@ -32,26 +32,25 @@ def fetch_song_details(song_id, token):
     }
 
 
-def fetch_lyrics_preview(url):
-    """Fetch the first 4 lines of lyrics from a Genius song page."""
+def fetch_lyrics(artist, title):
+    """Fetch lyrics from lyrics.ovh API using artist and title."""
+    import urllib.parse
+    artist_enc = urllib.parse.quote(artist)
+    title_enc = urllib.parse.quote(title)
+    url = f"https://api.lyrics.ovh/v1/{artist_enc}/{title_enc}"
     try:
-        from bs4 import BeautifulSoup
-    except ImportError:
-        return ""
-
-    try:
-        response = requests.get(url, timeout=8)
+        response = requests.get(url, timeout=10)
         response.raise_for_status()
-        soup = BeautifulSoup(response.text, "html.parser")
-        containers = soup.select('div[data-lyrics-container="true"]')
-        if not containers:
-            return ""
-        lines = []
-        for container in containers:
-            text = container.get_text(separator="\n").strip()
-            if text:
-                lines.extend(text.split("\n"))
-        first = [l.strip() for l in lines if l.strip()][:4]
-        return "\n".join(first)
+        data = response.json()
+        return data.get("lyrics", "")
     except Exception:
         return ""
+
+
+def fetch_lyrics_preview(artist, title):
+    """Fetch the first 8 lines of lyrics using the lyrics.ovh API."""
+    lyrics = fetch_lyrics(artist, title)
+    if not lyrics:
+        return ""
+    lines = [line.strip() for line in lyrics.splitlines() if line.strip()]
+    return "\n".join(lines[:8])

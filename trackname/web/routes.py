@@ -30,11 +30,12 @@ def search():
 
 @web_bp.route('/song/<song_id>')
 def song_detail(song_id):
-    url = request.args.get('url', '')
     token = current_app.config.get("GENIUS_TOKEN")
+    artist = request.args.get('artist', '')
+    title = request.args.get('title', '')
     try:
         song_details = details.fetch_song_details(song_id, token)
-        lyrics_preview = details.fetch_lyrics_preview(url) if url else ""
+        lyrics_preview = details.fetch_lyrics_preview(artist, title) if artist and title else ""
         return render_template('detail.html', details=song_details, lyrics_preview=lyrics_preview, song_id=song_id)
     except Exception as e:
         return render_template('detail.html', error=str(e), song_id=song_id)

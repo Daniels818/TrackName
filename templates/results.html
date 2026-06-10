@@ -29,6 +29,8 @@
                     data-artist="{{ result.primary_artist.name }}"
                     data-year="{{ result.release_date_for_display or '' }}"
                     data-url="{{ result.url }}"
+                    data-id="{{ result.id }}"
+                    data-img="{{ result.song_art_image_thumbnail_url or '' }}"
                     onclick="toggleFavorite(this.dataset, this)">♥</button>
         </div>
     </div>
