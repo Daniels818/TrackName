@@ -58,7 +58,7 @@ def display_song_detail(hit, details, lyrics_preview):
 
     if lyrics_preview:
         print()
-        print("  Lyrics preview:")
+        print("  Lyrics:")
         for line in lyrics_preview.split("\n"):
             print(f"  {line}")
     else:

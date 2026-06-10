@@ -188,10 +188,14 @@ def search_and_display(user_input, query, token):
         except (requests.exceptions.RequestException, InvalidAPIResponseError):
             print("  Error fetching details.")
 
-    if song_url:
-        lyrics_preview = details.fetch_lyrics_preview(song_url)
+    lyrics = ""
+    result = hit.get("result") or {}
+    artist = (result.get("primary_artist") or {}).get("name")
+    title = result.get("title")
+    if artist and title:
+        lyrics = details.fetch_lyrics(artist, title)
 
-    display_song_detail(hit, song_details, lyrics_preview)
+    display_song_detail(hit, song_details, lyrics)
 
     fav = input("  Save to favorites? (y/N): ").strip().lower()
     if fav == "y":
