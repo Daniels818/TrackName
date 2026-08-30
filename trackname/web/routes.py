@@ -1,8 +1,10 @@
 import logging
 
+from urllib.parse import urlparse
+
 from flask import Blueprint, render_template, request, jsonify, redirect, url_for, current_app
 from trackname.text import clean_query
-from trackname.api import search_genius
+from trackname.api import InvalidAPIResponseError, search_genius
 from trackname import storage, details, lyrics_search
 from trackname.lyrics_search import LyricsSearchError
 import requests
@@ -11,6 +13,18 @@ from trackname.web.limiter import limiter
 
 web_bp = Blueprint('web', __name__)
 logger = logging.getLogger(__name__)
+
+
+def _same_origin():
+    source = request.headers.get("Origin") or request.headers.get("Referer")
+    if not source:
+        return True
+    if source == "null":
+        return False
+    try:
+        return urlparse(source).netloc.lower() == request.host.lower()
+    except ValueError:
+        return False
 
 @web_bp.route('/')
 def index():
@@ -31,14 +45,25 @@ def search():
         if hits:
             storage.add_history_entry(query, hits)
         return render_template('results.html', hits=hits, query=query)
-    except Exception:
-        logger.exception("Search failed for query=%r", query)
-        return render_template(
-            'results.html',
-            error="Something went wrong while searching. Please try again.",
-            query=query,
-            hits=[],
-        )
+    except requests.exceptions.Timeout:
+        logger.warning("Genius search timed out for query=%r", query)
+        error = "The search timed out. Please try again."
+    except requests.exceptions.HTTPError as e:
+        status = e.response.status_code if e.response is not None else "?"
+        logger.warning("Genius API HTTP %s for query=%r", status, query)
+        error = "Token rejected by Genius API." if status == 401 else "Genius API error. Please try again."
+    except requests.exceptions.RequestException:
+        logger.exception("Network error searching query=%r", query)
+        error = "Network error. Please check your connection and try again."
+    except InvalidAPIResponseError:
+        logger.exception("Invalid Genius API response for query=%r", query)
+        error = "Unexpected response from Genius. Please try again."
+    return render_template(
+        'results.html',
+        error=error,
+        query=query,
+        hits=[],
+    )
 
 @web_bp.route('/song/<song_id>')
 def song_detail(song_id):
@@ -58,11 +83,23 @@ def song_detail(song_id):
         )
 
 @web_bp.route('/favorites/add', methods=['POST'])
+@limiter.limit("20 per minute")
 def add_favorite():
-    data = request.get_json()
-    if not data:
-        return jsonify({"success": False, "message": "Invalid data"})
-    
+    if not _same_origin():
+        return jsonify({"success": False, "message": "Cross-site request rejected"}), 403
+
+    data = request.get_json(silent=True)
+    if not isinstance(data, dict):
+        return jsonify({"success": False, "message": "Invalid data"}), 400
+
+    required_fields = ("title", "artist", "url")
+    missing = [f for f in required_fields if not data.get(f)]
+    if missing:
+        return jsonify({
+            "success": False,
+            "message": f"Missing required field(s): {', '.join(missing)}",
+        }), 400
+
     added = storage.add_favorite_entry(data)
     if added:
         return jsonify({"success": True, "message": "Added to favorites"})
@@ -71,6 +108,9 @@ def add_favorite():
 
 @web_bp.route('/favorites/remove', methods=['POST'])
 def remove_favorite():
+    if not _same_origin():
+        return jsonify({"success": False, "message": "Cross-site request rejected"}), 403
+
     data = request.get_json()
     url = data.get('url') if data else None
     if not url:
@@ -94,6 +134,9 @@ def history():
 
 @web_bp.route('/history/clear', methods=['POST'])
 def clear_history():
+    if not _same_origin():
+        return "Cross-site request rejected", 403
+
     storage.clear_history()
     return redirect(url_for('web.history'))
 
