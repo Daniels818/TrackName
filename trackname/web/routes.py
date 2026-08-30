@@ -1,3 +1,5 @@
+import logging
+
 from flask import Blueprint, render_template, request, jsonify, redirect, url_for, current_app
 from trackname.text import clean_query
 from trackname.api import search_genius
@@ -5,13 +7,17 @@ from trackname import storage, details, lyrics_search
 from trackname.lyrics_search import LyricsSearchError
 import requests
 
+from trackname.web.limiter import limiter
+
 web_bp = Blueprint('web', __name__)
+logger = logging.getLogger(__name__)
 
 @web_bp.route('/')
 def index():
     return render_template('index.html')
 
 @web_bp.route('/search')
+@limiter.limit("20 per minute")
 def search():
     query = request.args.get('q', '').strip()
     if not query:
@@ -25,8 +31,14 @@ def search():
         if hits:
             storage.add_history_entry(query, hits)
         return render_template('results.html', hits=hits, query=query)
-    except Exception as e:
-        return render_template('results.html', error=str(e), query=query, hits=[])
+    except Exception:
+        logger.exception("Search failed for query=%r", query)
+        return render_template(
+            'results.html',
+            error="Something went wrong while searching. Please try again.",
+            query=query,
+            hits=[],
+        )
 
 @web_bp.route('/song/<song_id>')
 def song_detail(song_id):
@@ -37,8 +49,13 @@ def song_detail(song_id):
         song_details = details.fetch_song_details(song_id, token)
         lyrics = details.fetch_lyrics(artist, title) if artist and title else ""
         return render_template('detail.html', details=song_details, lyrics=lyrics, song_id=song_id)
-    except Exception as e:
-        return render_template('detail.html', error=str(e), song_id=song_id)
+    except Exception:
+        logger.exception("Failed to fetch song details for song_id=%r", song_id)
+        return render_template(
+            'detail.html',
+            error="Couldn't load this song's details right now. Please try again.",
+            song_id=song_id,
+        )
 
 @web_bp.route('/favorites/add', methods=['POST'])
 def add_favorite():
@@ -85,6 +102,7 @@ def lyrics():
     return render_template('lyrics.html')
 
 @web_bp.route('/lyrics/search')
+@limiter.limit("20 per minute")
 def search_lyrics():
     fragment = request.args.get('q', '').strip()
     if not fragment:
@@ -99,5 +117,9 @@ def search_lyrics():
             q = f"{chosen['artist']} {chosen['title']}"
             return redirect(url_for('web.search', q=q))
         return render_template('lyrics.html', candidates=candidates)
-    except Exception as e:
-        return render_template('lyrics.html', error=str(e))
+    except Exception:
+        logger.exception("Lyrics search failed for fragment=%r", fragment)
+        return render_template(
+            'lyrics.html',
+            error="Something went wrong while searching lyrics. Please try again.",
+        )

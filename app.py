@@ -3,6 +3,8 @@ import sys
 from datetime import datetime
 from flask import Flask
 
+from trackname.web.limiter import limiter
+
 def datetimeformat(value):
     try:
         dt = datetime.fromisoformat(value)
@@ -20,6 +22,8 @@ def create_app():
     app = Flask(__name__)
     app.config["GENIUS_TOKEN"] = token
     app.template_filter('datetimeformat')(datetimeformat)
+
+    limiter.init_app(app)
 
     from trackname.web.routes import web_bp
     app.register_blueprint(web_bp)
