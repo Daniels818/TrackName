@@ -1,5 +1,5 @@
 import unittest
-from unittest.mock import MagicMock, Mock, patch
+from unittest.mock import Mock, patch
 
 from trackname import details
 
@@ -66,86 +66,43 @@ class FetchSongDetailsTest(unittest.TestCase):
 
 
 class FetchLyricsPreviewTest(unittest.TestCase):
+    """fetch_lyrics_preview(artist, title) delegates to fetch_lyrics (lyrics.ovh)
+    and trims the result to the first 8 non-blank lines. These tests were
+    previously written against an older bs4/Genius-scraping implementation
+    that no longer exists, causing them to fail with a TypeError."""
 
-    def _mock_bs4_import(self):
-        """Return a context manager that patches __import__ so bs4 resolves to a MagicMock."""
-        import builtins
-        original = builtins.__import__
-        mock_bs4 = MagicMock()
+    @patch("trackname.details.fetch_lyrics")
+    def test_fetch_lyrics_preview_no_lyrics_found(self, mock_fetch_lyrics):
+        mock_fetch_lyrics.return_value = ""
 
-        def mock_import(name, *args, **kwargs):
-            if name == "bs4":
-                return mock_bs4
-            return original(name, *args, **kwargs)
-
-        return patch("builtins.__import__", side_effect=mock_import), mock_bs4
-
-    @patch("trackname.details.requests.get")
-    def test_fetch_lyrics_preview_bs4_not_available(self, mock_get):
-        import builtins
-        original = builtins.__import__
-
-        def mock_import(name, *args, **kwargs):
-            if name == "bs4":
-                raise ImportError
-            return original(name, *args, **kwargs)
-
-        with patch("builtins.__import__", side_effect=mock_import):
-            result = details.fetch_lyrics_preview("https://genius.com/")
+        result = details.fetch_lyrics_preview("Artist", "Title")
 
         self.assertEqual(result, "")
-        mock_get.assert_not_called()
+        mock_fetch_lyrics.assert_called_once_with("Artist", "Title")
 
-    @patch("trackname.details.requests.get")
-    def test_fetch_lyrics_preview_request_fails(self, mock_get):
-        mock_get.side_effect = Exception("connection error")
+    @patch("trackname.details.fetch_lyrics")
+    def test_fetch_lyrics_preview_truncates_to_eight_lines(self, mock_fetch_lyrics):
+        mock_fetch_lyrics.return_value = "\n".join(f"Line {i}" for i in range(1, 12))
 
-        ctx, _ = self._mock_bs4_import()
-        with ctx:
-            result = details.fetch_lyrics_preview("https://genius.com/")
+        result = details.fetch_lyrics_preview("Artist", "Title")
 
-        self.assertEqual(result, "")
-        mock_get.assert_called_once_with("https://genius.com/", timeout=8)
+        self.assertEqual(result, "\n".join(f"Line {i}" for i in range(1, 9)))
 
-    @patch("trackname.details.requests.get")
-    def test_fetch_lyrics_preview_parses_lyrics(self, mock_get):
-        ctx, mock_bs4 = self._mock_bs4_import()
+    @patch("trackname.details.fetch_lyrics")
+    def test_fetch_lyrics_preview_strips_blank_lines(self, mock_fetch_lyrics):
+        mock_fetch_lyrics.return_value = "First line\n\n   \nSecond line\n"
 
-        mock_soup = MagicMock()
-        mock_bs4.BeautifulSoup.return_value = mock_soup
-        mock_container = MagicMock()
-        mock_container.get_text.return_value = (
-            "First line\nSecond line\nThird line\nFourth line\nFifth line"
-        )
-        mock_soup.select.return_value = [mock_container]
+        result = details.fetch_lyrics_preview("Artist", "Title")
 
-        response = Mock()
-        response.text = "<html>dummy</html>"
-        response.raise_for_status.return_value = None
-        mock_get.return_value = response
+        self.assertEqual(result, "First line\nSecond line")
 
-        with ctx:
-            result = details.fetch_lyrics_preview("https://genius.com/song")
+    @patch("trackname.details.fetch_lyrics")
+    def test_fetch_lyrics_preview_fewer_than_eight_lines(self, mock_fetch_lyrics):
+        mock_fetch_lyrics.return_value = "Only one line"
 
-        self.assertEqual(result, "First line\nSecond line\nThird line\nFourth line")
+        result = details.fetch_lyrics_preview("Artist", "Title")
 
-    @patch("trackname.details.requests.get")
-    def test_fetch_lyrics_preview_no_lyrics_container(self, mock_get):
-        ctx, mock_bs4 = self._mock_bs4_import()
-
-        mock_soup = MagicMock()
-        mock_bs4.BeautifulSoup.return_value = mock_soup
-        mock_soup.select.return_value = []
-
-        response = Mock()
-        response.text = "<html>dummy</html>"
-        response.raise_for_status.return_value = None
-        mock_get.return_value = response
-
-        with ctx:
-            result = details.fetch_lyrics_preview("https://genius.com/song")
-
-        self.assertEqual(result, "")
+        self.assertEqual(result, "Only one line")
 
 
 if __name__ == "__main__":

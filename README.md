@@ -54,7 +54,6 @@ For the terminal-based experience:
 ### Requirements
 - Python 3.8 or higher
 - Flask 3.0+
-- Beautiful Soup 4
 - Requests
 
 ### Setup
